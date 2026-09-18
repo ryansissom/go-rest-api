@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-type NewsPostRequestBody struct {
+type NewsPostReqBody struct {
 	Author    string   `json:"author"`
 	Title     string   `json:"title"`
 	Summary   string   `json:"summary"`
@@ -17,7 +17,7 @@ type NewsPostRequestBody struct {
 	Tags      []string `json:"tags"`
 }
 
-func (n NewsPostRequestBody) Validate() (errs error) {
+func (n NewsPostReqBody) Validate() (errs error) {
 	if n.Author == "" {
 		errs = errors.Join(errs, fmt.Errorf("author is empty: %s", n.Author))
 	}

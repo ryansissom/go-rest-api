@@ -6,14 +6,14 @@ import (
 	"github.com/ryansissom/go-rest-api/internal/handler"
 )
 
-func New() *http.ServeMux {
+func New(ns handler.NewsStorer) *http.ServeMux {
 	r := http.NewServeMux()
 
-	r.HandleFunc("POST /news", handler.PostNews())
-	r.HandleFunc("GET /news", handler.GetAllNews())
-	r.HandleFunc("GET /news/{news_id}", handler.GetNewsByID())
-	r.HandleFunc("PUT /news/{news_id}", handler.UpdateNewsByID())
-	r.HandleFunc("DELETE /news/{news_id}", handler.DeleteNewsByID())
+	r.HandleFunc("POST /news", handler.PostNews(ns))
+	r.HandleFunc("GET /news", handler.GetAllNews(ns))
+	r.HandleFunc("GET /news/{news_id}", handler.GetNewsByID(ns))
+	r.HandleFunc("PUT /news/{news_id}", handler.UpdateNewsByID(ns))
+	r.HandleFunc("DELETE /news/{news_id}", handler.DeleteNewsByID(ns))
 
 	return r
 }

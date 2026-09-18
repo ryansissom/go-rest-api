@@ -9,24 +9,24 @@ import (
 func TestNewsPostRequestBody_Validate(t *testing.T) {
 	testCases := []struct {
 		name        string
-		req         handler.NewsPostRequestBody
+		req         handler.NewsPostReqBody
 		expectedErr bool
 	}{
 		{
 			name:        "author empty",
-			req:         handler.NewsPostRequestBody{},
+			req:         handler.NewsPostReqBody{},
 			expectedErr: true,
 		},
 		{
 			name: "title empty",
-			req: handler.NewsPostRequestBody{
+			req: handler.NewsPostReqBody{
 				Author: "test-author",
 			},
 			expectedErr: true,
 		},
 		{
 			name: "summary empty",
-			req: handler.NewsPostRequestBody{
+			req: handler.NewsPostReqBody{
 				Author:    "test-author",
 				Title:     "test-title",
 				CreatedAt: "2024-01-01T00:00:00Z",
@@ -35,7 +35,7 @@ func TestNewsPostRequestBody_Validate(t *testing.T) {
 		},
 		{
 			name: "time invalid",
-			req: handler.NewsPostRequestBody{
+			req: handler.NewsPostReqBody{
 				Author:    "test-author",
 				Title:     "test-title",
 				Summary:   "test-summary",
@@ -45,7 +45,7 @@ func TestNewsPostRequestBody_Validate(t *testing.T) {
 		},
 		{
 			name: "tags empty",
-			req: handler.NewsPostRequestBody{
+			req: handler.NewsPostReqBody{
 				Author:    "test-author",
 				Title:     "test-title",
 				Summary:   "test-summary",
@@ -56,7 +56,7 @@ func TestNewsPostRequestBody_Validate(t *testing.T) {
 		},
 		{
 			name: "validate",
-			req: handler.NewsPostRequestBody{
+			req: handler.NewsPostReqBody{
 				Author:    "test-author",
 				Title:     "test-title",
 				Summary:   "test-summary",
