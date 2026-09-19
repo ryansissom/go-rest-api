@@ -28,14 +28,20 @@ func (n NewsPostReqBody) Validate() (news store.News, errs error) {
 	if n.Title == "" {
 		errs = errors.Join(errs, fmt.Errorf("title is empty: %s", n.Title))
 	}
+	if n.Content == "" {
+		errs = errors.Join(errs, fmt.Errorf("content is empty: %s", n.Content))
+	}
 	if n.Summary == "" {
-		errs = errors.Join(errs, fmt.Errorf("summary is empty: %s", n.Author))
+		errs = errors.Join(errs, fmt.Errorf("summary is empty: %s", n.Summary))
 	}
 	t, err := time.Parse(time.RFC3339, n.CreatedAt)
 	if err != nil {
 		errs = errors.Join(errs, err)
 	}
-	url, err := url.Parse(n.Source) 
+	if n.Source == "" {
+		errs = errors.Join(errs, fmt.Errorf("source is empty: %s", n.Source))
+	}
+	url, err := url.Parse(n.Source)
 	if err != nil {
 		errs = errors.Join(errs, err)
 	}
@@ -50,6 +56,7 @@ func (n NewsPostReqBody) Validate() (news store.News, errs error) {
 		Author:    n.Author,
 		Title:     n.Title,
 		Summary:   n.Summary,
+		Content:   n.Content,
 		CreatedAt: t,
 		Source:    url,
 		Tags:      n.Tags,
