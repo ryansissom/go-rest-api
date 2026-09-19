@@ -70,7 +70,7 @@ func TestNewsPostRequestBody_Validate(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			err := tc.req.Validate()
+			_, err := tc.req.Validate()
 
 			if tc.expectedErr && err == nil {
 				t.Fatalf("expected error but got nil")

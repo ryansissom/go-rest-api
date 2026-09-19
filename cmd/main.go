@@ -7,12 +7,13 @@ import (
 
 	"github.com/ryansissom/go-rest-api/internal/logger"
 	"github.com/ryansissom/go-rest-api/internal/router"
+	"github.com/ryansissom/go-rest-api/internal/store"
 )
 
 func main() {
 	log := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{AddSource: true}))
 
-	r := router.New(nil)
+	r := router.New(store.New())
 	wrappedRouter := logger.AddLoggerMid(log, logger.LoggerMid(r))
 
 	log.Info("server starting on port 8080")
