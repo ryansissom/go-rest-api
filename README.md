@@ -3,6 +3,10 @@
 A small REST API for creating and managing news items. It uses an in-memory
 store, so data is reset whenever the server stops.
 
+I built this project while learning Go to strengthen my software engineering
+skills as I work toward platform engineering. It applies core Go concepts in a
+complete, testable service while relying primarily on the standard library.
+
 Requires Go 1.27 or newer.
 
 ### Focus
@@ -20,15 +24,13 @@ on:
 
 ### Architecture
 
-```mermaid
-flowchart TD
-	Main[cmd/main.go] --> Router[router]
-	Router --> Handlers[HTTP handlers]
-	Handlers --> Interface[NewsStorer interface]
-	Interface --> Store[Concurrency-safe in-memory store]
-	Handlers --> Validation[Request validation]
-	Handlers --> Logging[Structured logging middleware]
-```
+| Layer | Responsibility |
+| --- | --- |
+| `cmd/main.go` | Creates the router, store, and middleware |
+| Router | Connects HTTP methods and paths to handlers |
+| Handlers | Decode requests, validate input, and return responses |
+| `NewsStorer` | Keeps handlers independent of storage details |
+| In-memory store | Stores news items behind a mutex |
 
 ### Run
 
