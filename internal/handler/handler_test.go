@@ -48,6 +48,7 @@ func Test_PostNews(t *testing.T) {
 			"author" : "test-author",
 			"title" : "test-title",
 			"summary" : "test-summary",
+			"content" : "test-content",
 			"created_at" : "2024-01-01T00:00:00Z",
 			"source" : "https://example.com",
 			"tags" : ["test"]
@@ -63,6 +64,7 @@ func Test_PostNews(t *testing.T) {
 			"author" : "test-author",
 			"title" : "test-title",
 			"summary" : "test-summary",
+			"content" : "test-content",
 			"created_at" : "2024-01-01T00:00:00Z",
 			"source" : "https://example.com",
 			"tags" : ["test"]
@@ -208,6 +210,7 @@ func Test_UpdateNewsByID(t *testing.T) {
 			"author" : "test-author",
 			"title" : "test-title",
 			"summary" : "test-summary",
+			"content" : "test-content",
 			"created_at" : "2024-01-01T00:00:00Z",
 			"source" : "https://example.com",
 			"tags" : ["test"]
@@ -223,6 +226,7 @@ func Test_UpdateNewsByID(t *testing.T) {
 			"author" : "test-author",
 			"title" : "test-title",
 			"summary" : "test-summary",
+			"content" : "test-content",
 			"created_at" : "2024-01-01T00:00:00Z",
 			"source" : "https://example.com",
 			"tags" : ["test"]
@@ -237,6 +241,7 @@ func Test_UpdateNewsByID(t *testing.T) {
 			// Arrange
 			w := httptest.NewRecorder()
 			r := httptest.NewRequest(http.MethodPost, "/", tc.body)
+			r.SetPathValue("news_id", uuid.New().String())
 
 			// Act
 			handler.UpdateNewsByID(tc.store)(w, r)

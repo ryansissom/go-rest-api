@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"uuid"
 
@@ -29,7 +30,7 @@ type AllNewsResponse struct {
 func PostNews(ns NewsStorer) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		logger := logger.FromContext(r.Context())
-		logger.Info("request recieved")
+		logger.Info("request received")
 		var newsRequestBody NewsPostReqBody
 		if err := json.NewDecoder(r.Body).Decode(&newsRequestBody); err != nil {
 			logger.Error("failed to decode the request", "error", err)
@@ -57,12 +58,13 @@ func PostNews(ns NewsStorer) http.HandlerFunc {
 func GetAllNews(ns NewsStorer) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		logger := logger.FromContext(r.Context())
-		logger.Info("request recieved")
+		logger.Info("request received")
 		news, err := ns.FindAll()
 
 		if err != nil {
 			logger.Error("failed to fetch all news", "error", err)
 			w.WriteHeader(http.StatusInternalServerError)
+			return
 		}
 
 		allNewsResponse := AllNewsResponse{News: news}
@@ -77,7 +79,7 @@ func GetAllNews(ns NewsStorer) http.HandlerFunc {
 func GetNewsByID(ns NewsStorer) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		logger := logger.FromContext(r.Context())
-		logger.Info("request recieved")
+		logger.Info("request received")
 		newsID := r.PathValue("news_id")
 		newsUUID, err := uuid.Parse(newsID)
 		if err != nil {
@@ -87,8 +89,12 @@ func GetNewsByID(ns NewsStorer) http.HandlerFunc {
 		}
 		news, err := ns.FindByID(newsUUID)
 		if err != nil {
-			logger.Error("news not found", "newsId", newsID, "error", err)
-			w.WriteHeader(http.StatusInternalServerError)
+			logger.Error("failed to find news", "newsId", newsID, "error", err)
+			if errors.Is(err, store.ErrNotFound) {
+				w.WriteHeader(http.StatusNotFound)
+			} else {
+				w.WriteHeader(http.StatusInternalServerError)
+			}
 			return
 		}
 		if err := json.NewEncoder(w).Encode(&news); err != nil {
@@ -104,6 +110,13 @@ func UpdateNewsByID(ns NewsStorer) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		logger := logger.FromContext(r.Context())
 		logger.Info("request received")
+		newsID := r.PathValue("news_id")
+		newsUUID, err := uuid.Parse(newsID)
+		if err != nil {
+			logger.Error("news id not a valid uuid", "newsId", newsID, "error", err)
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
 
 		var newsRequestBody NewsPostReqBody
 		if err := json.NewDecoder(r.Body).Decode(&newsRequestBody); err != nil {
@@ -119,10 +132,15 @@ func UpdateNewsByID(ns NewsStorer) http.HandlerFunc {
 			w.Write([]byte(err.Error()))
 			return
 		}
+		n.ID = newsUUID
 
 		if err := ns.UpdateByID(n); err != nil {
-			logger.Error("error updating news", "error", err)
-			w.WriteHeader(http.StatusInternalServerError)
+			logger.Error("error updating news", "newsId", newsID, "error", err)
+			if errors.Is(err, store.ErrNotFound) {
+				w.WriteHeader(http.StatusNotFound)
+			} else {
+				w.WriteHeader(http.StatusInternalServerError)
+			}
 			return
 		}
 	}
@@ -131,7 +149,7 @@ func UpdateNewsByID(ns NewsStorer) http.HandlerFunc {
 func DeleteNewsByID(ns NewsStorer) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		logger := logger.FromContext(r.Context())
-		logger.Info("request recieved")
+		logger.Info("request received")
 		newsID := r.PathValue("news_id")
 		newsUUID, err := uuid.Parse(newsID)
 		if err != nil {
@@ -141,8 +159,12 @@ func DeleteNewsByID(ns NewsStorer) http.HandlerFunc {
 		}
 
 		if err := ns.DeleteByID(newsUUID); err != nil {
-			logger.Error("news not found", "newsId", newsID, "error", err)
-			w.WriteHeader(http.StatusInternalServerError)
+			logger.Error("failed to delete news", "newsId", newsID, "error", err)
+			if errors.Is(err, store.ErrNotFound) {
+				w.WriteHeader(http.StatusNotFound)
+			} else {
+				w.WriteHeader(http.StatusInternalServerError)
+			}
 			return
 		}
 

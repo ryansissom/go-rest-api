@@ -6,6 +6,8 @@ import (
 	"uuid"
 )
 
+var ErrNotFound = errors.New("news not found")
+
 type Store struct {
 	l sync.Mutex
 	n []News
@@ -40,7 +42,7 @@ func (s *Store) FindByID(id uuid.UUID) (News, error) {
 			return n, nil
 		}
 	}
-	return News{}, errors.New("news not found")
+	return News{}, ErrNotFound
 }
 
 func (s *Store) UpdateByID(news News) error {
@@ -52,7 +54,7 @@ func (s *Store) UpdateByID(news News) error {
 			return nil
 		}
 	}
-	return errors.New("news not found")
+	return ErrNotFound
 }
 
 func (s *Store) DeleteByID(id uuid.UUID) error {
@@ -69,7 +71,7 @@ func (s *Store) DeleteByID(id uuid.UUID) error {
 	}(id)
 
 	if idx == -1 {
-		return errors.New("id not found")
+		return ErrNotFound
 	}
 	s.n = append(s.n[:idx], s.n[idx+1:]...)
 	return nil
