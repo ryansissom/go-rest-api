@@ -29,7 +29,7 @@ on:
 | `cmd/main.go` | Creates the router, store, and middleware |
 | Router | Connects HTTP methods and paths to handlers |
 | Handlers | Decode requests, validate input, and return responses |
-| `NewsStorer` | Keeps handlers independent of storage details |
+| `NewsStorer` | Defines the storage behavior required by handlers |
 | In-memory store | Stores news items behind a mutex |
 
 ### Run
