@@ -5,15 +5,30 @@ store, so data is reset whenever the server stops.
 
 Requires Go 1.27 or newer.
 
-### Project Structure
+### Focus
 
-The API uses Go's standard `net/http` package with method-aware routing,
-request validation, JSON encoding, and UUID-based resource IDs. Handlers depend
-on a small store interface, while the current implementation uses a
-mutex-protected in-memory store.
+The project intentionally uses Go's standard library where possible and focuses
+on:
 
-Structured logging is applied through HTTP middleware, and the project includes
-table-driven tests for request validation and handler behavior.
+- HTTP routing with `net/http`
+- Dependency inversion through small interfaces
+- Request validation and error handling
+- Structured logging with `log/slog`
+- Concurrency-safe in-memory storage
+- UUID-based resource identifiers
+- Table-driven HTTP handler tests
+
+### Architecture
+
+```mermaid
+flowchart TD
+	Main[cmd/main.go] --> Router[router]
+	Router --> Handlers[HTTP handlers]
+	Handlers --> Interface[NewsStorer interface]
+	Interface --> Store[Concurrency-safe in-memory store]
+	Handlers --> Validation[Request validation]
+	Handlers --> Logging[Structured logging middleware]
+```
 
 ### Run
 
