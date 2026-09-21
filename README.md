@@ -5,6 +5,16 @@ store, so data is reset whenever the server stops.
 
 Requires Go 1.27 or newer.
 
+### Project Structure
+
+The API uses Go's standard `net/http` package with method-aware routing,
+request validation, JSON encoding, and UUID-based resource IDs. Handlers depend
+on a small store interface, while the current implementation uses a
+mutex-protected in-memory store.
+
+Structured logging is applied through HTTP middleware, and the project includes
+table-driven tests for request validation and handler behavior.
+
 ### Run
 
 ```sh
