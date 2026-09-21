@@ -21,6 +21,7 @@ type NewsPostReqBody struct {
 	Tags      []string  `json:"tags"`
 }
 
+// Validate checks the request fields and converts them to the store model.
 func (n NewsPostReqBody) Validate() (news store.News, errs error) {
 	if n.Author == "" {
 		errs = errors.Join(errs, fmt.Errorf("author is empty: %s", n.Author))

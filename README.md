@@ -3,6 +3,8 @@
 A small REST API for creating and managing news items. It uses an in-memory
 store, so data is reset whenever the server stops.
 
+Requires Go 1.27 or newer.
+
 ### Run
 
 ```sh
@@ -21,6 +23,10 @@ The server listens on `http://localhost:8080`.
 | `PUT` | `/news/{news_id}` | Update a news item |
 | `DELETE` | `/news/{news_id}` | Delete a news item |
 
+Request bodies use these fields: `author`, `title`, `summary`, `content`,
+`created_at` (RFC3339), `source` (URL), and at least one `tags` value. For
+updates, the ID in the URL determines which item is changed.
+
 Example request:
 
 ```sh
@@ -34,4 +40,12 @@ curl -X POST http://localhost:8080/news \
 ```sh
 go test ./...
 go vet ./...
+```
+
+The Makefile also provides:
+
+```sh
+make run
+make fmt
+make tidy
 ```

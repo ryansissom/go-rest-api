@@ -13,6 +13,7 @@ import (
 func main() {
 	log := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{AddSource: true}))
 
+	// The application uses an in-memory store, so data is lost when the server stops.
 	r := router.New(store.New())
 	wrappedRouter := logger.AddLoggerMid(log, logger.LoggerMid(r))
 

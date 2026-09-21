@@ -6,6 +6,7 @@ import (
 	"uuid"
 )
 
+// News is the application model stored and returned by the API.
 type News struct {
 	ID        uuid.UUID `json:"id"`
 	Author    string    `json:"author"`

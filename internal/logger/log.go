@@ -7,8 +7,10 @@ import (
 	"os"
 )
 
+// CtxKey identifies the request logger stored in a context.
 type CtxKey struct{}
 
+// CtxWithLogger returns a context containing logger when logger is non-nil.
 func CtxWithLogger(ctx context.Context, logger *slog.Logger) context.Context {
 	if logger == nil {
 		return ctx
@@ -21,6 +23,7 @@ func CtxWithLogger(ctx context.Context, logger *slog.Logger) context.Context {
 	return context.WithValue(ctx, CtxKey{}, logger)
 }
 
+// FromContext returns the request logger or a default stdout logger.
 func FromContext(ctx context.Context) *slog.Logger {
 	if logger, ok := ctx.Value(CtxKey{}).(*slog.Logger); ok {
 		return logger
@@ -29,6 +32,7 @@ func FromContext(ctx context.Context) *slog.Logger {
 	return slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{AddSource: true}))
 }
 
+// AddLoggerMid places the application logger into the request context.
 func AddLoggerMid(logger *slog.Logger, next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		loggerCtx := CtxWithLogger(r.Context(), logger)
@@ -37,6 +41,7 @@ func AddLoggerMid(logger *slog.Logger, next http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
+// LoggerMid logs the request path before passing control to the next handler.
 func LoggerMid(next http.Handler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		l := FromContext(r.Context())

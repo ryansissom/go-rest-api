@@ -83,7 +83,7 @@ func Test_PostNews(t *testing.T) {
 			// Act
 			handler.PostNews(tc.store)(w, r)
 
-			// Assort
+			// Assert
 			if w.Result().StatusCode != tc.expectedStatus {
 				t.Errorf("Expected %d but got %d", tc.expectedStatus, w.Result().StatusCode)
 			}
@@ -115,12 +115,12 @@ func Test_GetAllNews(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			// Arrange
 			w := httptest.NewRecorder()
-			r := httptest.NewRequest(http.MethodPost, "/", nil)
+			r := httptest.NewRequest(http.MethodGet, "/news", nil)
 
 			// Act
 			handler.GetAllNews(tc.store)(w, r)
 
-			// Assort
+			// Assert
 			if w.Result().StatusCode != tc.expectedStatus {
 				t.Errorf("Expected %d but got %d", tc.expectedStatus, w.Result().StatusCode)
 			}
@@ -161,12 +161,12 @@ func Test_GetNewsByID(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			// Arrange
 			w := httptest.NewRecorder()
-			r := httptest.NewRequest(http.MethodPost, "/", nil)
+			r := httptest.NewRequest(http.MethodGet, "/news/"+tc.newsID, nil)
 			r.SetPathValue("news_id", tc.newsID)
 			// Act
 			handler.GetNewsByID(tc.store)(w, r)
 
-			// Assort
+			// Assert
 			if w.Result().StatusCode != tc.expectedStatus {
 				t.Errorf("Expected %d but got %d", tc.expectedStatus, w.Result().StatusCode)
 			}
@@ -240,13 +240,14 @@ func Test_UpdateNewsByID(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			// Arrange
 			w := httptest.NewRecorder()
-			r := httptest.NewRequest(http.MethodPost, "/", tc.body)
-			r.SetPathValue("news_id", uuid.New().String())
+			newsID := uuid.New().String()
+			r := httptest.NewRequest(http.MethodPut, "/news/"+newsID, tc.body)
+			r.SetPathValue("news_id", newsID)
 
 			// Act
 			handler.UpdateNewsByID(tc.store)(w, r)
 
-			// Assort
+			// Assert
 			if w.Result().StatusCode != tc.expectedStatus {
 				t.Errorf("Expected %d but got %d", tc.expectedStatus, w.Result().StatusCode)
 			}
@@ -286,13 +287,13 @@ func Test_DeleteNewsByID(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			// Arrange
 			w := httptest.NewRecorder()
-			r := httptest.NewRequest(http.MethodPost, "/", nil)
+			r := httptest.NewRequest(http.MethodDelete, "/news/"+tc.newsID, nil)
 			r.SetPathValue("news_id", tc.newsID)
 
 			// Act
 			handler.DeleteNewsByID(tc.store)(w, r)
 
-			// Assort
+			// Assert
 			if w.Result().StatusCode != tc.expectedStatus {
 				t.Errorf("Expected %d but got %d", tc.expectedStatus, w.Result().StatusCode)
 			}

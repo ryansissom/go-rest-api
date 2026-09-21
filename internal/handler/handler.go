@@ -11,22 +11,24 @@ import (
 )
 
 type NewsStorer interface {
-	// Create news from post request body
+	// Create stores a new news item.
 	Create(store.News) (store.News, error)
-	// Find news by its ID
+	// FindByID returns one news item by ID.
 	FindByID(uuid.UUID) (store.News, error)
-	// Return all news in the store
+	// FindAll returns every news item.
 	FindAll() ([]store.News, error)
-	// Deletes a news item by its ID
+	// DeleteByID removes a news item by ID.
 	DeleteByID(uuid.UUID) error
-	// Updates a news resource by its ID
+	// UpdateByID replaces a news item by ID.
 	UpdateByID(store.News) error
 }
 
+// AllNewsResponse wraps the collection returned by GET /news.
 type AllNewsResponse struct {
 	News []store.News `json:"news"`
 }
 
+// PostNews validates and creates a news item from the request body.
 func PostNews(ns NewsStorer) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		logger := logger.FromContext(r.Context())
@@ -55,6 +57,7 @@ func PostNews(ns NewsStorer) http.HandlerFunc {
 	}
 }
 
+// GetAllNews returns every news item in the store.
 func GetAllNews(ns NewsStorer) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		logger := logger.FromContext(r.Context())
@@ -76,6 +79,7 @@ func GetAllNews(ns NewsStorer) http.HandlerFunc {
 	}
 }
 
+// GetNewsByID returns the news item identified by the route parameter.
 func GetNewsByID(ns NewsStorer) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		logger := logger.FromContext(r.Context())
@@ -106,6 +110,7 @@ func GetNewsByID(ns NewsStorer) http.HandlerFunc {
 	}
 }
 
+// UpdateNewsByID validates the body and replaces the item identified by the URL.
 func UpdateNewsByID(ns NewsStorer) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		logger := logger.FromContext(r.Context())
@@ -146,6 +151,7 @@ func UpdateNewsByID(ns NewsStorer) http.HandlerFunc {
 	}
 }
 
+// DeleteNewsByID removes the item identified by the route parameter.
 func DeleteNewsByID(ns NewsStorer) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		logger := logger.FromContext(r.Context())

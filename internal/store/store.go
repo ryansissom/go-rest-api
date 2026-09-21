@@ -6,8 +6,10 @@ import (
 	"uuid"
 )
 
+// ErrNotFound lets handlers distinguish missing items from server errors.
 var ErrNotFound = errors.New("news not found")
 
+// Store is a concurrency-safe in-memory collection of news items.
 type Store struct {
 	l sync.Mutex
 	n []News
@@ -20,6 +22,7 @@ func New() *Store {
 	}
 }
 
+// Create assigns a new ID and appends the item to the collection.
 func (s *Store) Create(news News) (News, error) {
 	s.l.Lock()
 	defer s.l.Unlock()
@@ -28,12 +31,14 @@ func (s *Store) Create(news News) (News, error) {
 	return news, nil
 }
 
+// FindAll returns the collection of stored news items.
 func (s *Store) FindAll() ([]News, error) {
 	s.l.Lock()
 	defer s.l.Unlock()
 	return s.n, nil
 }
 
+// FindByID returns the item matching id or ErrNotFound.
 func (s *Store) FindByID(id uuid.UUID) (News, error) {
 	s.l.Lock()
 	defer s.l.Unlock()
@@ -45,6 +50,7 @@ func (s *Store) FindByID(id uuid.UUID) (News, error) {
 	return News{}, ErrNotFound
 }
 
+// UpdateByID replaces the item with the same ID or returns ErrNotFound.
 func (s *Store) UpdateByID(news News) error {
 	s.l.Lock()
 	defer s.l.Unlock()
@@ -57,6 +63,7 @@ func (s *Store) UpdateByID(news News) error {
 	return ErrNotFound
 }
 
+// DeleteByID removes the item matching id or returns ErrNotFound.
 func (s *Store) DeleteByID(id uuid.UUID) error {
 	s.l.Lock()
 	defer s.l.Unlock()
